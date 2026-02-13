@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <pattern id="dots" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
+      <circle cx="15" cy="15" r="1.2" fill="rgba(255,255,255,0.12)" />
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#0A1F3B" />
+  <rect width="1200" height="630" fill="url(#dots)" />
+
+  <!-- Subtle gradient overlay -->
+  <rect width="1200" height="630" fill="url(#grad)" opacity="0.3" />
+  <defs>
+    <radialGradient id="grad" cx="50%" cy="45%" r="60%">
+      <stop offset="0%" stop-color="#1E3A5F" stop-opacity="0.5" />
+      <stop offset="100%" stop-color="#0A1F3B" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <!-- Flask icon (centered, large) -->
+  <g transform="translate(600, 220)" text-anchor="middle">
+    <!-- Flask body fill (blue liquid) -->
+    <polygon points="-18,-30 -50,40 50,40 18,-30" fill="#3B82F6" opacity="0.3" />
+    <polygon points="-18,-10 -50,40 50,40 18,-10" fill="#60A5FA" opacity="0.6" />
+
+    <!-- Flask outline -->
+    <line x1="-22" y1="-50" x2="22" y2="-50" stroke="white" stroke-width="3" stroke-linecap="round" />
+    <line x1="-18" y1="-50" x2="-18" y2="-30" stroke="white" stroke-width="3" />
+    <line x1="18" y1="-50" x2="18" y2="-30" stroke="white" stroke-width="3" />
+    <line x1="-18" y1="-30" x2="-50" y2="40" stroke="white" stroke-width="3" />
+    <line x1="18" y1="-30" x2="50" y2="40" stroke="white" stroke-width="3" />
+    <line x1="-50" y1="40" x2="50" y2="40" stroke="white" stroke-width="3" stroke-linecap="round" />
+
+    <!-- Bubbles inside flask -->
+    <circle cx="-8" cy="10" r="4" fill="white" opacity="0.3" />
+    <circle cx="12" cy="20" r="3" fill="white" opacity="0.25" />
+    <circle cx="0" cy="30" r="2.5" fill="white" opacity="0.2" />
+  </g>
+
+  <!-- Title -->
+  <text x="600" y="340" text-anchor="middle" font-family="Inter, Helvetica, Arial, sans-serif" font-weight="800" font-size="52" fill="white" letter-spacing="-1">
+    Le Lab LinkedIn d'Augustin
+  </text>
+
+  <!-- Subtitle -->
+  <text x="600" y="390" text-anchor="middle" font-family="Inter, Helvetica, Arial, sans-serif" font-weight="400" font-size="26" fill="rgba(255,255,255,0.7)">
+    Analysez et optimisez votre profil LinkedIn
+  </text>
+
+  <!-- Bottom accent line -->
+  <rect x="500" y="430" width="200" height="3" rx="1.5" fill="#3B82F6" />
+
+  <!-- Score badge hint -->
+  <g transform="translate(600, 500)">
+    <rect x="-120" y="-18" width="240" height="36" rx="18" fill="rgba(59,130,246,0.15)" stroke="rgba(59,130,246,0.4)" stroke-width="1.5" />
+    <text x="0" y="6" text-anchor="middle" font-family="Inter, Helvetica, Arial, sans-serif" font-weight="600" font-size="16" fill="rgba(255,255,255,0.8)">
+      Score + Plan d'action personnalise
+    </text>
+  </g>
+</svg>
