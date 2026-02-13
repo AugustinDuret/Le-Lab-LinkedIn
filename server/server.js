@@ -25,8 +25,12 @@ console.log("SUPABASE_KEY présente:", !!process.env.SUPABASE_KEY);
 
 let supabaseClient = null;
 function getSupabase() {
-  if (!supabaseClient && process.env.SUPABASE_URL && process.env.SUPABASE_KEY) {
-    supabaseClient = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+  if (!supabaseClient) {
+    console.log("getSupabase() - SUPABASE_URL:", process.env.SUPABASE_URL ? process.env.SUPABASE_URL.substring(0, 20) + "..." : "MANQUANTE");
+    console.log("getSupabase() - SUPABASE_KEY:", process.env.SUPABASE_KEY ? "présente (" + process.env.SUPABASE_KEY.length + " chars)" : "MANQUANTE");
+    if (process.env.SUPABASE_URL && process.env.SUPABASE_KEY) {
+      supabaseClient = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+    }
   }
   return supabaseClient;
 }
