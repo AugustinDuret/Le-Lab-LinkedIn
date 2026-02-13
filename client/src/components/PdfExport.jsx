@@ -1,6 +1,32 @@
 import { useState, useCallback } from 'react';
 import { useLanguage } from '../LanguageContext';
 
+/* ── Emoji → text replacements for jsPDF (no emoji support) ── */
+const EMOJI_REPLACEMENTS = {
+  '\u{1F4A1}': 'Astuce : ',   // 💡
+  '\u{1F3AF}': '[Cible] ',    // 🎯
+  '\u{1F9F2}': '[Aimant] ',   // 🧲
+  '\u{1F4BC}': '[Emploi] ',   // 💼
+  '\u{1F3A4}': '[Micro] ',    // 🎤
+  '\u2615':    '',             // ☕
+  '\u{1F9EA}': '',             // 🧪
+  '\u{1FAF6}\u{1F3FC}': '',   // 🫶🏼
+  '\u{1FAF6}': '',             // 🫶
+};
+
+function stripEmojis(text) {
+  if (!text) return '';
+  let cleaned = text;
+  for (const [emoji, replacement] of Object.entries(EMOJI_REPLACEMENTS)) {
+    cleaned = cleaned.replaceAll(emoji, replacement);
+  }
+  // Remove any remaining emojis (surrogate pairs, variation selectors, ZWJ sequences, etc.)
+  cleaned = cleaned.replace(/[\u{1F000}-\u{1FFFF}]|[\u{2600}-\u{27BF}]|[\u{FE00}-\u{FE0F}]|[\u{200D}]|[\u{20E3}]|[\u{E0020}-\u{E007F}]/gu, '');
+  // Clean up extra whitespace left behind
+  cleaned = cleaned.replace(/  +/g, ' ').trim();
+  return cleaned;
+}
+
 /* ── Color helpers ── */
 function hexToRgb(hex) {
   const r = parseInt(hex.slice(1, 3), 16);
@@ -39,6 +65,9 @@ const OBJ_LABELS = {
 
 /* ── PDF Builder ── */
 function generatePDF(doc, results, lang, t) {
+  // Wrap t() to strip emojis from all translated strings rendered in PDF
+  const pt = (key) => stripEmojis(t(key));
+
   let y = 0;
   let pageNum = 1;
 
@@ -121,13 +150,13 @@ function generatePDF(doc, results, lang, t) {
     doc.setFontSize(7);
     doc.setTextColor(148, 163, 184);
     doc.setFont('helvetica', 'normal');
-    doc.text(`${t('pdfFooter')} - ${siteUrl}`, PAGE_W / 2, fy + 5, { align: 'center' });
+    doc.text(`${pt('pdfFooter')} - ${siteUrl}`, PAGE_W / 2, fy + 5, { align: 'center' });
     doc.text(`${pageNum}`, PAGE_W - MARGIN, fy + 5, { align: 'right' });
   }
 
   function wrapText(text, maxWidth, fontSize) {
     doc.setFontSize(fontSize);
-    return doc.splitTextToSize(text || '', maxWidth);
+    return doc.splitTextToSize(stripEmojis(text || ''), maxWidth);
   }
 
   function drawProgressBar(x, barY, width, pct, color) {
@@ -150,7 +179,7 @@ function generatePDF(doc, results, lang, t) {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(20);
   doc.setTextColor(30, 41, 59);
-  doc.text(t('pdfTitle'), PAGE_W / 2, y, { align: 'center' });
+  doc.text(pt('pdfTitle'), PAGE_W / 2, y, { align: 'center' });
   y += 8;
 
   y += 4;
@@ -210,7 +239,7 @@ function generatePDF(doc, results, lang, t) {
   }
 
   // Score label
-  const scoreLabel = getScoreLabel(results.scoreGlobal, t);
+  const scoreLabel = stripEmojis(getScoreLabel(results.scoreGlobal, t));
   doc.setFontSize(12);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(scoreRgb[0], scoreRgb[1], scoreRgb[2]);
@@ -222,7 +251,7 @@ function generatePDF(doc, results, lang, t) {
   doc.setFontSize(11);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(30, 58, 95);
-  doc.text(t('radarView'), MARGIN, y);
+  doc.text(pt('radarView'), MARGIN, y);
   y += 6;
 
   for (const c of results.criteres) {
@@ -233,7 +262,7 @@ function generatePDF(doc, results, lang, t) {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
     doc.setTextColor(30, 41, 59);
-    doc.text(c.nom, MARGIN, y + 3);
+    doc.text(stripEmojis(c.nom), MARGIN, y + 3);
 
     // Progress bar
     const barX = MARGIN + 68;
@@ -264,7 +293,7 @@ function generatePDF(doc, results, lang, t) {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(11);
   doc.setTextColor(30, 58, 95);
-  doc.text(t('globalOverview'), MARGIN + 8, y + 7);
+  doc.text(pt('globalOverview'), MARGIN + 8, y + 7);
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
@@ -279,7 +308,7 @@ function generatePDF(doc, results, lang, t) {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(15);
   doc.setTextColor(30, 58, 95);
-  doc.text(t('criteriaDetail'), MARGIN, y);
+  doc.text(pt('criteriaDetail'), MARGIN, y);
   y += 8;
 
   for (let i = 0; i < results.criteres.length; i++) {
@@ -297,7 +326,7 @@ function generatePDF(doc, results, lang, t) {
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
     doc.setTextColor(30, 41, 59);
-    doc.text(c.nom, MARGIN, y);
+    doc.text(stripEmojis(c.nom), MARGIN, y);
 
     doc.setFontSize(14);
     doc.setTextColor(cRgb[0], cRgb[1], cRgb[2]);
@@ -312,7 +341,7 @@ function generatePDF(doc, results, lang, t) {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(7.5);
     doc.setTextColor(148, 163, 184);
-    doc.text(`${t('pdfWeightLabel')} : ${c.poids}%`, MARGIN, y);
+    doc.text(`${pt('pdfWeightLabel')} : ${c.poids}%`, MARGIN, y);
     y += 5;
 
     // Explanation
@@ -355,7 +384,7 @@ function generatePDF(doc, results, lang, t) {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(15);
   doc.setTextColor(30, 58, 95);
-  doc.text(t('priorityActions'), MARGIN, y);
+  doc.text(pt('priorityActions'), MARGIN, y);
   y += 8;
 
   for (const item of results.feuilleDeRoute) {
@@ -399,7 +428,7 @@ function generatePDF(doc, results, lang, t) {
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
   doc.setTextColor(75, 85, 99);
-  doc.text(t('pdfCoffeeCta'), PAGE_W / 2, y + 7, { align: 'center' });
+  doc.text(pt('pdfCoffeeCta'), PAGE_W / 2, y + 7, { align: 'center' });
   doc.setTextColor(59, 130, 246);
   doc.setFontSize(8);
   doc.textWithLink(coffeeUrl, PAGE_W / 2 - doc.getTextWidth(coffeeUrl) / 2, y + 13, { url: coffeeUrl });

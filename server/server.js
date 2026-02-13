@@ -379,9 +379,10 @@ app.post('/api/analyze', analyzeLimiter, (req, res, next) => {
 
 app.get('/api/admin/analyses', (req, res) => {
   const adminKey = process.env.ADMIN_KEY;
-  console.log("Reçu:", req.query.key?.substring(0,3), "Longueur:", req.query.key?.length);
-  console.log("Attendu:", adminKey?.substring(0,3), "Longueur:", adminKey?.length);
-  if (!adminKey || req.query.key !== adminKey) {
+  console.log("ADMIN DEBUG - Key reçue:", JSON.stringify(req.query.key));
+  console.log("ADMIN DEBUG - Key attendue:", JSON.stringify(adminKey));
+  console.log("ADMIN DEBUG - Match:", req.query.key?.trim() === adminKey?.trim());
+  if (!adminKey || req.query.key?.trim() !== adminKey?.trim()) {
     return res.status(403).json({ error: 'Acces interdit.' });
   }
   try {
