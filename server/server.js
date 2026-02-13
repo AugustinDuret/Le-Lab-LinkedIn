@@ -372,6 +372,24 @@ app.post('/api/analyze', analyzeLimiter, (req, res, next) => {
   }
 });
 
+// --- Admin: view analyses ---
+
+app.get('/api/admin/analyses', (req, res) => {
+  const adminKey = process.env.ADMIN_KEY;
+  if (!adminKey || req.query.key !== adminKey) {
+    return res.status(403).json({ error: 'Acces interdit.' });
+  }
+  try {
+    ensureDataDir();
+    const raw = fs.readFileSync(ANALYSES_FILE, 'utf-8');
+    const analyses = JSON.parse(raw);
+    return res.json(analyses);
+  } catch (err) {
+    console.error('Failed to read analyses:', err.message);
+    return res.status(500).json({ error: 'Impossible de lire les analyses.' });
+  }
+});
+
 // --- Production static files ---
 
 if (isProduction) {
