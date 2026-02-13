@@ -13,10 +13,14 @@ if (fs.existsSync(__envPath)) {
 }
 import pdf from 'pdf-parse/lib/pdf-parse.js';
 import { buildSystemPrompt, redistributeWeights } from './prompt.js';
+import { createClient } from '@supabase/supabase-js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const isProduction = process.env.NODE_ENV === 'production';
+
+// --- Supabase ---
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
 app.use(cors());
 app.use(express.json());
@@ -43,36 +47,6 @@ function sanitizeText(text, maxLength = 50000) {
     sanitized = sanitized.substring(0, maxLength);
   }
   return sanitized.trim();
-}
-
-// --- JSON Storage ---
-const DATA_DIR = path.join(__dirname, '..', 'data');
-const ANALYSES_FILE = path.join(DATA_DIR, 'analyses.json');
-
-function ensureDataDir() {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  }
-  if (!fs.existsSync(ANALYSES_FILE)) {
-    fs.writeFileSync(ANALYSES_FILE, '[]', 'utf-8');
-  }
-}
-
-function saveAnalysis(entry) {
-  try {
-    ensureDataDir();
-    let analyses = [];
-    try {
-      const raw = fs.readFileSync(ANALYSES_FILE, 'utf-8');
-      analyses = JSON.parse(raw);
-    } catch {
-      analyses = [];
-    }
-    analyses.push(entry);
-    fs.writeFileSync(ANALYSES_FILE, JSON.stringify(analyses, null, 2), 'utf-8');
-  } catch (err) {
-    console.error('Failed to save analysis:', err.message);
-  }
 }
 
 // --- Rate Limiting ---
@@ -355,15 +329,29 @@ app.post('/api/analyze', analyzeLimiter, (req, res, next) => {
       }
     }
 
-    // 13. Save analysis to JSON storage
-    saveAnalysis({
-      timestamp: new Date().toISOString(),
-      objective,
-      lang: userLang,
-      hasBanner: !!hasBanner,
-      hasPhoto: !!hasPhoto,
-      scoreGlobal: analysis.scoreGlobal ?? null,
-    });
+    // 13. Save analysis to Supabase (non-blocking)
+    try {
+      await supabase.from('analyses').insert({
+        lang: userLang,
+        objective,
+        score_global: analysis.scoreGlobal ?? null,
+        label_global: analysis.labelGlobal ?? null,
+        score_photo: analysis.criteres.find(c => c.nom.includes('Photo'))?.score || null,
+        score_banniere: analysis.criteres.find(c => c.nom.includes('Bannière') || c.nom.includes('Banner'))?.score || null,
+        score_titre: analysis.criteres.find(c => c.nom.includes('Titre') || c.nom.includes('Headline'))?.score || null,
+        score_resume: analysis.criteres.find(c => c.nom.includes('Résumé') || c.nom.includes('About'))?.score || null,
+        score_experiences: analysis.criteres.find(c => c.nom.includes('Expérience') || c.nom.includes('Experience'))?.score || null,
+        score_competences: analysis.criteres.find(c => c.nom.includes('Compétence') || c.nom.includes('Skill'))?.score || null,
+        score_coherence: analysis.criteres.find(c => c.nom.includes('Cohérence') || c.nom.includes('Coherence'))?.score || null,
+        analyse_globale: analysis.analyseGlobale ?? null,
+        feuille_de_route: JSON.stringify(analysis.feuilleDeRoute ?? []),
+        profil_texte: pdfText,
+        has_banner: !!hasBanner,
+        has_photo: !!hasPhoto,
+      });
+    } catch (err) {
+      console.error('Erreur Supabase:', err);
+    }
 
     return res.json({ ...analysis, objective });
   } catch (error) {
@@ -377,23 +365,22 @@ app.post('/api/analyze', analyzeLimiter, (req, res, next) => {
 
 // --- Admin: view analyses ---
 
-app.get('/api/admin/analyses', (req, res) => {
-  const adminKey = process.env.ADMIN_KEY;
-  console.log("ADMIN DEBUG - Key reçue:", JSON.stringify(req.query.key));
-  console.log("ADMIN DEBUG - Key attendue:", JSON.stringify(adminKey));
-  console.log("ADMIN DEBUG - Match:", req.query.key?.trim() === adminKey?.trim());
-  if (!adminKey || req.query.key?.trim() !== adminKey?.trim()) {
+app.get('/api/admin/analyses', async (req, res) => {
+  if (!process.env.ADMIN_KEY || req.query.key?.trim() !== process.env.ADMIN_KEY?.trim()) {
     return res.status(403).json({ error: 'Acces interdit.' });
   }
-  try {
-    ensureDataDir();
-    const raw = fs.readFileSync(ANALYSES_FILE, 'utf-8');
-    const analyses = JSON.parse(raw);
-    return res.json(analyses);
-  } catch (err) {
-    console.error('Failed to read analyses:', err.message);
-    return res.status(500).json({ error: 'Impossible de lire les analyses.' });
+
+  const { data, error } = await supabase
+    .from('analyses')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Supabase read error:', error.message);
+    return res.status(500).json({ error: 'Erreur lors de la recuperation des donnees.' });
   }
+
+  return res.json(data);
 });
 
 // --- Production static files ---
@@ -416,6 +403,4 @@ app.listen(PORT, () => {
   } else {
     console.log('✓ ANTHROPIC_API_KEY configuree (' + key.slice(0, 10) + '...)');
   }
-  // Ensure data directory exists on startup
-  ensureDataDir();
 });
