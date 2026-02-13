@@ -7,7 +7,10 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
-dotenv.config({ path: path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '.env'), override: true });
+const __envPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '.env');
+if (fs.existsSync(__envPath)) {
+  dotenv.config({ path: __envPath });
+}
 import pdf from 'pdf-parse/lib/pdf-parse.js';
 import { buildSystemPrompt, redistributeWeights } from './prompt.js';
 
