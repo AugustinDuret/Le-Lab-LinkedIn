@@ -5,7 +5,7 @@ export default function CTASection({ score }) {
   const { t } = useLanguage();
   const [copied, setCopied] = useState(false);
 
-  const siteUrl = 'https://le-lab-linkedin.com';
+  const siteUrl = 'https://le-lab-linkedin-production.up.railway.app';
   const postText = t('ctaSharePostText')
     .replace('{score}', score)
     .replace('{url}', siteUrl);

@@ -46,7 +46,7 @@ function generatePDF(doc, results, lang, t) {
     year: 'numeric', month: 'long', day: 'numeric',
   });
   const coffeeUrl = 'https://buymeacoffee.com/augustin.lelab';
-  const siteUrl = 'le-lab-linkedin.com';
+  const siteUrl = 'le-lab-linkedin-production.up.railway.app';
 
   /* ── Helpers ── */
   function checkPage(needed) {
