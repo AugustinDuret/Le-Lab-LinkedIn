@@ -19,8 +19,17 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const isProduction = process.env.NODE_ENV === 'production';
 
-// --- Supabase ---
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+// --- Supabase (lazy init) ---
+console.log("SUPABASE_URL présente:", !!process.env.SUPABASE_URL);
+console.log("SUPABASE_KEY présente:", !!process.env.SUPABASE_KEY);
+
+let supabaseClient = null;
+function getSupabase() {
+  if (!supabaseClient && process.env.SUPABASE_URL && process.env.SUPABASE_KEY) {
+    supabaseClient = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+  }
+  return supabaseClient;
+}
 
 app.use(cors());
 app.use(express.json());
@@ -331,24 +340,29 @@ app.post('/api/analyze', analyzeLimiter, (req, res, next) => {
 
     // 13. Save analysis to Supabase (non-blocking)
     try {
-      await supabase.from('analyses').insert({
-        lang: userLang,
-        objective,
-        score_global: analysis.scoreGlobal ?? null,
-        label_global: analysis.labelGlobal ?? null,
-        score_photo: analysis.criteres.find(c => c.nom.includes('Photo'))?.score || null,
-        score_banniere: analysis.criteres.find(c => c.nom.includes('Bannière') || c.nom.includes('Banner'))?.score || null,
-        score_titre: analysis.criteres.find(c => c.nom.includes('Titre') || c.nom.includes('Headline'))?.score || null,
-        score_resume: analysis.criteres.find(c => c.nom.includes('Résumé') || c.nom.includes('About'))?.score || null,
-        score_experiences: analysis.criteres.find(c => c.nom.includes('Expérience') || c.nom.includes('Experience'))?.score || null,
-        score_competences: analysis.criteres.find(c => c.nom.includes('Compétence') || c.nom.includes('Skill'))?.score || null,
-        score_coherence: analysis.criteres.find(c => c.nom.includes('Cohérence') || c.nom.includes('Coherence'))?.score || null,
-        analyse_globale: analysis.analyseGlobale ?? null,
-        feuille_de_route: JSON.stringify(analysis.feuilleDeRoute ?? []),
-        profil_texte: pdfText,
-        has_banner: !!hasBanner,
-        has_photo: !!hasPhoto,
-      });
+      const supabase = getSupabase();
+      if (supabase) {
+        await supabase.from('analyses').insert({
+          lang: userLang,
+          objective,
+          score_global: analysis.scoreGlobal ?? null,
+          label_global: analysis.labelGlobal ?? null,
+          score_photo: analysis.criteres.find(c => c.nom.includes('Photo'))?.score || null,
+          score_banniere: analysis.criteres.find(c => c.nom.includes('Bannière') || c.nom.includes('Banner'))?.score || null,
+          score_titre: analysis.criteres.find(c => c.nom.includes('Titre') || c.nom.includes('Headline'))?.score || null,
+          score_resume: analysis.criteres.find(c => c.nom.includes('Résumé') || c.nom.includes('About'))?.score || null,
+          score_experiences: analysis.criteres.find(c => c.nom.includes('Expérience') || c.nom.includes('Experience'))?.score || null,
+          score_competences: analysis.criteres.find(c => c.nom.includes('Compétence') || c.nom.includes('Skill'))?.score || null,
+          score_coherence: analysis.criteres.find(c => c.nom.includes('Cohérence') || c.nom.includes('Coherence'))?.score || null,
+          analyse_globale: analysis.analyseGlobale ?? null,
+          feuille_de_route: JSON.stringify(analysis.feuilleDeRoute ?? []),
+          profil_texte: pdfText,
+          has_banner: !!hasBanner,
+          has_photo: !!hasPhoto,
+        });
+      } else {
+        console.error('Supabase non configuré');
+      }
     } catch (err) {
       console.error('Erreur Supabase:', err);
     }
@@ -368,6 +382,11 @@ app.post('/api/analyze', analyzeLimiter, (req, res, next) => {
 app.get('/api/admin/analyses', async (req, res) => {
   if (!process.env.ADMIN_KEY || req.query.key?.trim() !== process.env.ADMIN_KEY?.trim()) {
     return res.status(403).json({ error: 'Acces interdit.' });
+  }
+
+  const supabase = getSupabase();
+  if (!supabase) {
+    return res.status(500).json({ error: 'Supabase non configuré.' });
   }
 
   const { data, error } = await supabase
