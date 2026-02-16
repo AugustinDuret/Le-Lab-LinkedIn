@@ -516,20 +516,41 @@ export default function UploadSection({
                 : 'bg-[#D1D5DB] text-gray-400 cursor-not-allowed shadow-none'
             }`}
           >
-            {isReady && (
-              <>
-                <span className="bubble bubble-1" />
-                <span className="bubble bubble-2" />
-                <span className="bubble bubble-3" />
-                <span className="bubble bubble-4" />
-                <span className="bubble bubble-5" />
-              </>
-            )}
-            <svg width="28" height="28" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="relative z-10">
+            <svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="relative z-10 overflow-hidden">
+              <clipPath id="flaskClip">
+                <path d="M16 4h8v2h-1v10.5l8.5 14.25A3 3 0 0128.93 36H11.07a3 3 0 01-2.57-4.75L17 17V6h-1V4z" />
+              </clipPath>
               <path
                 d="M16 4h8v2h-1v10.5l8.5 14.25A3 3 0 0128.93 36H11.07a3 3 0 01-2.57-4.75L17 17V6h-1V4z"
                 stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"
               />
+              {isReady && (
+                <g clipPath="url(#flaskClip)">
+                  <circle cx="17" cy="30" r="1.6" fill="#93C5FD" opacity="0.7">
+                    <animate attributeName="cy" values="30;22;14" dur="2.2s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0.7;0.35;0" dur="2.2s" repeatCount="indefinite" />
+                    <animate attributeName="r" values="1.6;1;0.3" dur="2.2s" repeatCount="indefinite" />
+                  </circle>
+                  <circle cx="23" cy="32" r="1.2" fill="#A78BFA" opacity="0.65">
+                    <animate attributeName="cy" values="32;24;16" dur="2.5s" begin="0.4s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0.65;0.3;0" dur="2.5s" begin="0.4s" repeatCount="indefinite" />
+                    <animate attributeName="r" values="1.2;0.8;0.2" dur="2.5s" begin="0.4s" repeatCount="indefinite" />
+                  </circle>
+                  <circle cx="20" cy="31" r="0.9" fill="#34D399" opacity="0.6">
+                    <animate attributeName="cy" values="31;21;13" dur="1.8s" begin="0.8s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0.6;0.3;0" dur="1.8s" begin="0.8s" repeatCount="indefinite" />
+                    <animate attributeName="r" values="0.9;0.5;0.15" dur="1.8s" begin="0.8s" repeatCount="indefinite" />
+                  </circle>
+                  <circle cx="19" cy="5" r="1" fill="#93C5FD" opacity="0.4">
+                    <animate attributeName="cy" values="5;2;-2" dur="3s" begin="1.2s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0.4;0.2;0" dur="3s" begin="1.2s" repeatCount="indefinite" />
+                  </circle>
+                  <circle cx="22" cy="4" r="0.7" fill="#A78BFA" opacity="0.35">
+                    <animate attributeName="cy" values="4;1;-3" dur="2.8s" begin="0.2s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0.35;0.15;0" dur="2.8s" begin="0.2s" repeatCount="indefinite" />
+                  </circle>
+                </g>
+              )}
             </svg>
             <span className="relative z-10">{t('analyzeButton')}</span>
           </button>
