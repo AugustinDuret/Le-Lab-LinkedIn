@@ -69,8 +69,17 @@ export default function CTASection({ score }) {
                 href={buyMeCoffeeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 font-bold py-3 px-8 rounded-xl text-gray-900 text-lg transition-all hover:opacity-90 shadow-lg"
-                style={{ background: '#FFDD00', fontFamily: "'Cookie', cursive" }}
+                className="inline-flex items-center cursor-pointer transition-opacity duration-200 hover:opacity-90"
+                style={{
+                  background: '#FFDD00',
+                  border: '1px solid #000000',
+                  borderRadius: '5px',
+                  padding: '7px 10px',
+                  fontFamily: "'Cookie', cursive",
+                  fontSize: '28px',
+                  color: '#000000',
+                  textDecoration: 'none',
+                }}
               >
                 {t('ctaSupportButton')}
               </a>

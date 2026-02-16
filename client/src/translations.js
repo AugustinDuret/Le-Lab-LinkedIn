@@ -122,7 +122,7 @@ const translations = {
     ctaSupportText1: 'Cet outil est gratuit et le restera. C\'est promis.',
     ctaSupportText2: 'Mais entre les heures de développement, les coûts d\'hébergement et les crédits IA qui tournent à chaque analyse, le Lab a un coût ! Si cette analyse vous a apporté quelque chose, un p\'tit café m\'aide à maintenir et améliorer l\'outil.',
     ctaSupportTextEmoji: '\u{1FAF6}\u{1F3FC} Un p\'tit geste chouette de votre part, un gros boost pour moi ! \u{1FAF6}\u{1F3FC}',
-    ctaSupportButton: 'M\'offrir un café \u2615',
+    ctaSupportButton: '\u2615 M\'offrir un café',
     ctaConnectText: 'Envie d\'aller plus loin dans l\'optimisation de votre profil ?',
     ctaConnectLink: 'Connectons-nous',
 
@@ -256,7 +256,7 @@ const translations = {
     ctaSupportText1: 'This tool is free and always will be. Pinky promise.',
     ctaSupportText2: 'But between the hours of development, hosting costs and the AI credits used for each analysis, the Lab has a cost! If this analysis brought you something, a small coffee helps me maintain and improve the tool.',
     ctaSupportTextEmoji: '\u{1FAF6}\u{1F3FC} A small gesture from you, a huge boost for me! \u{1FAF6}\u{1F3FC}',
-    ctaSupportButton: 'Buy me a coffee \u2615',
+    ctaSupportButton: '\u2615 Buy me a coffee',
     ctaConnectText: 'Want to take your profile optimization further?',
     ctaConnectLink: 'Let\'s connect',
 
