@@ -1,8 +1,8 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useLanguage } from '../LanguageContext';
 
 export default function CTASection({ score }) {
-  const { t, lang } = useLanguage();
+  const { t } = useLanguage();
   const [copied, setCopied] = useState(false);
 
   const siteUrl = 'https://le-lab-linkedin-production.up.railway.app';
@@ -10,6 +10,7 @@ export default function CTASection({ score }) {
     .replace('{score}', score)
     .replace('{url}', siteUrl);
 
+  const buyMeCoffeeUrl = 'https://buymeacoffee.com/augustin.lelab';
   const linkedInProfileUrl = 'https://www.linkedin.com/in/augustin-duret/';
   const linkedInFeedUrl = 'https://www.linkedin.com/feed/';
 
@@ -32,30 +33,6 @@ export default function CTASection({ score }) {
       setTimeout(() => setCopied(false), 2000);
     }
   }, [postText]);
-
-  useEffect(() => {
-    // Remove any existing BMC widget so it re-renders with the correct language
-    const existing = document.querySelector('.bmc-btn-container');
-    if (existing) existing.remove();
-
-    const script = document.createElement('script');
-    script.src = 'https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js';
-    script.setAttribute('data-name', 'bmc-button');
-    script.setAttribute('data-slug', 'augustin.lelab');
-    script.setAttribute('data-color', '#FFDD00');
-    script.setAttribute('data-emoji', '☕');
-    script.setAttribute('data-font', 'Cookie');
-    script.setAttribute('data-text', lang === 'fr' ? "M'offrir un café" : 'Buy me a coffee');
-    script.setAttribute('data-outline-color', '#000000');
-    script.setAttribute('data-font-color', '#000000');
-    script.setAttribute('data-coffee-color', '#ffffff');
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-      const btn = document.querySelector('.bmc-btn-container');
-      if (btn) btn.remove();
-    };
-  }, [lang]);
 
   return (
     <section className="relative w-screen left-1/2 -translate-x-1/2 hero-gradient overflow-hidden">
@@ -88,7 +65,15 @@ export default function CTASection({ score }) {
             </div>
 
             <div className="flex justify-center pt-1">
-              <div className="bmc-btn-container" />
+              <a
+                href={buyMeCoffeeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 font-bold py-3 px-8 rounded-xl text-gray-900 text-lg transition-all hover:opacity-90 shadow-lg"
+                style={{ background: '#FFDD00', fontFamily: "'Cookie', cursive" }}
+              >
+                {t('ctaSupportButton')}
+              </a>
             </div>
           </div>
         </div>
