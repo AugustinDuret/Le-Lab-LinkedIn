@@ -15,6 +15,10 @@ const translations = {
     // Step 1
     pdfDropText: 'Déposez votre profil LinkedIn (PDF)',
     pdfDropHint: 'Téléchargez votre profil depuis LinkedIn et déposez-le ici',
+    pdfHowToGet: 'Comment l\'obtenir ?',
+    pdfGuideTitle: 'Comment télécharger votre profil LinkedIn en PDF',
+    pdfGuideSteps: '1. Allez sur votre profil LinkedIn\n2. Cliquez sur « Plus »\n3. Cliquez sur « Enregistrer au format PDF »',
+    pdfGuideClose: 'Fermer',
 
     // Step 2 - Banner
     bannerLabel: 'Bannière LinkedIn',
@@ -149,6 +153,10 @@ const translations = {
     // Step 1
     pdfDropText: 'Drop your LinkedIn profile (PDF)',
     pdfDropHint: 'Download your profile from LinkedIn and drop it here',
+    pdfHowToGet: 'How to get it?',
+    pdfGuideTitle: 'How to download your LinkedIn profile as PDF',
+    pdfGuideSteps: '1. Go to your LinkedIn profile\n2. Click "More"\n3. Click "Save to PDF"',
+    pdfGuideClose: 'Close',
 
     // Step 2 - Banner
     bannerLabel: 'LinkedIn banner',

@@ -1,7 +1,78 @@
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import { Turnstile } from '@marsidev/react-turnstile';
 import { useLanguage } from '../LanguageContext';
 import PrivacyModal from './PrivacyModal';
+
+/* --- PDF Guide Modal --- */
+function PdfGuideModal({ isOpen, onClose, t }) {
+  const overlayRef = useRef(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (isOpen) window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  const handleOverlayClick = (e) => {
+    if (e.target === overlayRef.current) onClose();
+  };
+
+  return (
+    <div
+      ref={overlayRef}
+      onClick={handleOverlayClick}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in"
+    >
+      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[85vh] flex flex-col animate-fade-in-up">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 pb-4 border-b border-gray-100">
+          <h2 className="text-lg font-bold text-text pr-4">{t('pdfGuideTitle')}</h2>
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all shrink-0"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="overflow-y-auto p-6 space-y-5 flex-1">
+          <img
+            src="/Lab-LinkedIn.SaveToPDFScreenshot.png"
+            alt="Guide LinkedIn PDF"
+            className="w-full h-auto rounded-xl border border-gray-200"
+          />
+          <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{t('pdfGuideSteps')}</p>
+        </div>
+
+        {/* Footer */}
+        <div className="p-6 pt-4 border-t border-gray-100">
+          <button
+            onClick={onClose}
+            className="w-full bg-primary text-white font-bold py-3 px-6 rounded-xl hover:bg-primary/90 transition-colors"
+          >
+            {t('pdfGuideClose')}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 /* --- File validation constants --- */
 const MAX_PDF_SIZE = 10 * 1024 * 1024; // 10 MB
@@ -88,6 +159,7 @@ export default function UploadSection({
   const [photoPreview, setPhotoPreview] = useState(null);
   const [fileError, setFileError] = useState(null);
   const [privacyOpen, setPrivacyOpen] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
 
   /* --- File validation helpers --- */
   const validatePdf = useCallback((file) => {
@@ -286,6 +358,15 @@ export default function UploadSection({
               </button>
             </div>
           )}
+
+          <button
+            type="button"
+            onClick={() => setGuideOpen(true)}
+            className="inline-flex items-center gap-1.5 text-sm text-accent cursor-pointer hover:underline underline-offset-2 transition-all"
+          >
+            <span>❓</span>
+            {t('pdfHowToGet')}
+          </button>
         </div>
 
         {/* Step 2 - Visuals (Optional) */}
@@ -565,6 +646,9 @@ export default function UploadSection({
 
       {/* Privacy Policy Modal */}
       <PrivacyModal isOpen={privacyOpen} onClose={() => setPrivacyOpen(false)} />
+
+      {/* PDF Guide Modal */}
+      <PdfGuideModal isOpen={guideOpen} onClose={() => setGuideOpen(false)} t={t} />
     </section>
   );
 }
