@@ -95,7 +95,7 @@ function LabRecommendationBox({ children }) {
     >
       <p className="text-sm font-bold mb-3" style={{ color: '#B8860B' }}>
         <span style={{ color: '#B8860B' }}>{t('labRecommendationAstuce')}</span>
-        {' — '}
+        {' | '}
         {t('labRecommendationTitle')}
       </p>
       {children}

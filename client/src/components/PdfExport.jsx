@@ -433,8 +433,8 @@ function generatePDF(doc, results, lang, t) {
     // Lab Recommendation — Titre
     if (isTitre && results.recommandationTitre?.recommande && results.recommandationTitre?.alternative) {
       const boxTitle = lang === 'en'
-        ? 'Tip - Lab Recommendation'
-        : 'Astuce - Recommandation du Lab';
+        ? 'Tip | Lab Recommendation'
+        : 'Astuce | Recommandation du Lab';
       const recommendedLabel = lang === 'en' ? 'Recommended:' : 'Recommande :';
       const alternativeLabel = lang === 'en' ? 'Alternative:' : 'Alternative :';
       const rec = stripEmojis(results.recommandationTitre.recommande);
@@ -448,8 +448,8 @@ function generatePDF(doc, results, lang, t) {
     // Lab Recommendation — Résumé
     if (isResume && results.recommandationResume) {
       const boxTitle = lang === 'en'
-        ? 'Tip - Lab Recommendation'
-        : 'Astuce - Recommandation du Lab';
+        ? 'Tip | Lab Recommendation'
+        : 'Astuce | Recommandation du Lab';
       const summaryLabel = lang === 'en' ? 'Suggested summary:' : 'Resume suggere :';
       const summaryText = stripEmojis(results.recommandationResume);
       const summaryLines = wrapText(summaryText, CONTENT_W - 14, 8);
