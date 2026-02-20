@@ -290,7 +290,7 @@ app.post('/api/analyze', analyzeLimiter, (req, res, next) => {
     const callClaude = async () => {
       const message = await anthropic.messages.create({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 4096,
+        max_tokens: 8192,
         temperature: 0,
         system: systemPrompt,
         messages: [{ role: 'user', content: userContent }],

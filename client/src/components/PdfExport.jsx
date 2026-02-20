@@ -311,10 +311,73 @@ function generatePDF(doc, results, lang, t) {
   doc.text(pt('criteriaDetail'), MARGIN, y);
   y += 8;
 
+  const titreCriterionNames = ['Titre', 'Headline'];
+  const resumeCriterionNames = ['Résumé', 'Summary'];
+
+  function drawLabRecommendationBox(titleLabel, lines1label, lines1, lines2label, lines2) {
+    // Calculate total height needed
+    let boxH = 8; // header
+    boxH += 5; // lines1 label
+    boxH += lines1.length * 4 + 4;
+    if (lines2label && lines2) {
+      boxH += 5; // lines2 label
+      boxH += lines2.length * 4 + 4;
+    }
+    boxH += 4; // bottom padding
+
+    checkPage(boxH + 4);
+
+    // Yellow background box with left golden border
+    doc.setFillColor(255, 249, 230);
+    doc.roundedRect(MARGIN, y, CONTENT_W, boxH, 2, 2, 'F');
+    doc.setFillColor(245, 200, 66);
+    doc.rect(MARGIN, y, 3, boxH, 'F');
+
+    // Header: "Astuce - Lab Recommendation"
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8.5);
+    doc.setTextColor(184, 134, 11);
+    doc.text(titleLabel, MARGIN + 6, y + 6);
+    y += 10;
+
+    // First entry (Recommended / Recommandé)
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7.5);
+    doc.setTextColor(21, 128, 61);
+    doc.text(lines1label, MARGIN + 6, y);
+    y += 4;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(30, 41, 59);
+    doc.text(lines1, MARGIN + 6, y);
+    y += lines1.length * 4 + 3;
+
+    // Second entry (Alternative) if provided
+    if (lines2label && lines2) {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(7.5);
+      doc.setTextColor(29, 78, 216);
+      doc.text(lines2label, MARGIN + 6, y);
+      y += 4;
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(30, 41, 59);
+      doc.text(lines2, MARGIN + 6, y);
+      y += lines2.length * 4 + 3;
+    }
+
+    y += 2;
+  }
+
   for (let i = 0; i < results.criteres.length; i++) {
     const c = results.criteres[i];
     const color = getScoreColor(c.score);
     const cRgb = hexToRgb(color);
+
+    const isTitre = titreCriterionNames.some(n => c.nom.includes(n));
+    const isResume = resumeCriterionNames.some(n => c.nom.includes(n));
 
     // Pre-calculate height
     const explLines = wrapText(c.explication, CONTENT_W - 4, 8.5);
@@ -365,6 +428,33 @@ function generatePDF(doc, results, lang, t) {
         y += actionLines.length * 4 + 1;
       }
       y += 2;
+    }
+
+    // Lab Recommendation — Titre
+    if (isTitre && results.recommandationTitre?.recommande && results.recommandationTitre?.alternative) {
+      const boxTitle = lang === 'en'
+        ? 'Tip - Lab Recommendation'
+        : 'Astuce - Recommandation du Lab';
+      const recommendedLabel = lang === 'en' ? 'Recommended:' : 'Recommande :';
+      const alternativeLabel = lang === 'en' ? 'Alternative:' : 'Alternative :';
+      const rec = stripEmojis(results.recommandationTitre.recommande);
+      const alt = stripEmojis(results.recommandationTitre.alternative);
+      const recLines = wrapText(rec, CONTENT_W - 14, 8);
+      const altLines = wrapText(alt, CONTENT_W - 14, 8);
+      y += 2;
+      drawLabRecommendationBox(boxTitle, recommendedLabel, recLines, alternativeLabel, altLines);
+    }
+
+    // Lab Recommendation — Résumé
+    if (isResume && results.recommandationResume) {
+      const boxTitle = lang === 'en'
+        ? 'Tip - Lab Recommendation'
+        : 'Astuce - Recommandation du Lab';
+      const summaryLabel = lang === 'en' ? 'Suggested summary:' : 'Resume suggere :';
+      const summaryText = stripEmojis(results.recommandationResume);
+      const summaryLines = wrapText(summaryText, CONTENT_W - 14, 8);
+      y += 2;
+      drawLabRecommendationBox(boxTitle, summaryLabel, summaryLines, null, null);
     }
 
     // Separator between criteria

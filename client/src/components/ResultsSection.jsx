@@ -42,7 +42,11 @@ export default function ResultsSection({ results, onReset }) {
         <Separator />
 
         <div className="animate-fade-in-up stagger-4">
-          <CriteriaAccordion criteres={results.criteres} />
+          <CriteriaAccordion
+            criteres={results.criteres}
+            recommandationTitre={results.recommandationTitre}
+            recommandationResume={results.recommandationResume}
+          />
         </div>
 
         <Separator />

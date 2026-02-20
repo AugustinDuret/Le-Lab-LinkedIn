@@ -382,8 +382,33 @@ Analyze the following LinkedIn profile and return ONLY a valid JSON object (no m
     { "priorite": 2, "titre": "<string>", "description": "<1-2 sentences>" },
     { "priorite": 3, "titre": "<string>", "description": "<1-2 sentences>" },
     { "priorite": 4, "titre": "<string>", "description": "<1-2 sentences>" }
-  ]
+  ],
+  "recommandationTitre": {
+    "recommande": "<string: recommended headline #1, the most adapted to the profile and goal>",
+    "alternative": "<string: recommended headline #2, a different approach>"
+  },
+  "recommandationResume": "<string: complete rewritten summary, ready to copy-paste>"
 }
+
+PERSONALIZED RECOMMENDATIONS:
+
+HEADLINES — Generate 2 personalized LinkedIn headline proposals:
+- "recommande": the headline you recommend most strongly. It must be specific to the analyzed profile (job title, specialty, value proposition), optimized for the chosen goal, with the right keywords.
+- "alternative": a second different but equally relevant approach (different angle, different wording).
+- Both headlines must be directly usable (copy-paste) and based on the user's real experiences, skills and positioning.
+- Do NOT write generic headlines. Each headline must be unique to THIS profile.
+
+SUMMARY (ABOUT) — Generate 1 complete rewritten LinkedIn summary:
+- The summary must be ready to copy-paste directly into the LinkedIn "About" section.
+- It must be personalized to the analyzed profile: use the real experiences, skills, achievements.
+- It must be optimized for the chosen goal (find clients, attract talent, employment, personal branding).
+- Structure: strong hook -> background/expertise -> added value -> call to action.
+- ADAPT THE LENGTH TO SENIORITY:
+  * Student / junior (less than 5 years of experience): short summary, 4-6 lines. Focused on ambitions, key skills and education.
+  * Intermediate (5-15 years): medium summary, 6-10 lines. Mix of experience and value proposition.
+  * Senior (15+ years): more developed summary, 10-15 lines. Storytelling, notable achievements, vision.
+- Deduce seniority from the experience dates visible in the profile.
+- Write in the first person (I/my) as this is the LinkedIn standard.
 
 SCORING RULES:
 - scoreGlobal is the weighted average of each criterion's score according to the provided weights.
@@ -421,8 +446,33 @@ Analyse le profil LinkedIn suivant et retourne UNIQUEMENT un objet JSON valide (
     { "priorite": 2, "titre": "<string>", "description": "<1-2 phrases>" },
     { "priorite": 3, "titre": "<string>", "description": "<1-2 phrases>" },
     { "priorite": 4, "titre": "<string>", "description": "<1-2 phrases>" }
-  ]
+  ],
+  "recommandationTitre": {
+    "recommande": "<string : titre recommandé n°1, le plus adapté au profil et à l'objectif>",
+    "alternative": "<string : titre recommandé n°2, une autre approche>"
+  },
+  "recommandationResume": "<string : résumé complet réécrit, prêt à copier-coller>"
 }
+
+RECOMMANDATIONS PERSONNALISÉES :
+
+TITRES (HEADLINE) — Génère 2 propositions de titre LinkedIn personnalisées :
+- "recommande" : le titre que tu recommandes le plus fortement. Il doit être spécifique au profil analysé (nom du métier, spécialité, proposition de valeur), optimisé pour l'objectif choisi, avec les bons mots-clés.
+- "alternative" : une deuxième approche différente mais tout aussi pertinente (angle différent, formulation différente).
+- Les 2 titres doivent être directement utilisables (copier-coller) et basés sur les vraies expériences, compétences et positionnement de l'utilisateur.
+- Ne fais PAS de titre générique. Chaque titre doit être unique à CE profil.
+
+RÉSUMÉ (ABOUT) — Génère 1 résumé LinkedIn complet réécrit :
+- Le résumé doit être prêt à copier-coller directement dans la section "About" de LinkedIn.
+- Il doit être personnalisé au profil analysé : reprendre les vraies expériences, compétences, réalisations.
+- Il doit être optimisé pour l'objectif choisi (trouver des clients, attirer des talents, emploi, personal branding).
+- Structure : accroche forte → parcours/expertise → valeur ajoutée → appel à l'action.
+- ADAPTE LA LONGUEUR À LA SÉNIORITÉ :
+  * Étudiant / junior (moins de 5 ans d'expérience) : résumé court, 4-6 lignes. Focalisé sur les ambitions, compétences clés et formations.
+  * Intermédiaire (5-15 ans) : résumé moyen, 6-10 lignes. Mix expérience et proposition de valeur.
+  * Senior (15+ ans) : résumé plus développé, 10-15 lignes. Storytelling, réalisations marquantes, vision.
+- Déduis la séniorité à partir des dates d'expériences visibles dans le profil.
+- Utilise le vouvoiement dans le résumé UNIQUEMENT si le profil original utilise le vouvoiement. Sinon, écris à la première personne (je/mon/mes) car c'est le standard LinkedIn.
 
 RÈGLES DE SCORING :
 - Le scoreGlobal est la moyenne pondérée des scores de chaque critère selon les poids fournis.

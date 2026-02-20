@@ -15,7 +15,95 @@ function getTextColor(score) {
   return 'text-success';
 }
 
-export default function CriteriaAccordion({ criteres }) {
+function CopyableBlock({ text, badge, badgeColor }) {
+  const { t } = useLanguage();
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  return (
+    <div className="mb-3">
+      <div className="flex items-center gap-2 mb-1.5">
+        <span
+          className={`text-xs font-bold px-2 py-0.5 rounded-full ${badgeColor}`}
+        >
+          {badge}
+        </span>
+      </div>
+      <div className="flex items-start gap-2 bg-gray-50 rounded-xl border border-gray-200 p-3">
+        <span className="flex-1 text-sm font-semibold text-gray-800 leading-snug">{text}</span>
+        <button
+          onClick={handleCopy}
+          className={`shrink-0 text-xs font-bold px-2.5 py-1 rounded-lg transition-all duration-200 ${
+            copied
+              ? 'bg-green-500 text-white'
+              : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-100'
+          }`}
+        >
+          {copied ? t('labCopiedButton') : t('labCopyButton')}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function CopyableSummaryBlock({ text }) {
+  const { t } = useLanguage();
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  return (
+    <div className="bg-gray-50 rounded-xl border border-gray-200 p-3">
+      <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap mb-3">{text}</p>
+      <div className="flex justify-end">
+        <button
+          onClick={handleCopy}
+          className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-all duration-200 ${
+            copied
+              ? 'bg-green-500 text-white'
+              : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-100'
+          }`}
+        >
+          {copied ? t('labCopiedButton') : t('labCopySummaryButton')}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function LabRecommendationBox({ children }) {
+  const { t } = useLanguage();
+  return (
+    <div
+      className="mt-4 rounded-xl p-4"
+      style={{
+        background: '#FFF9E6',
+        border: '2px dashed #F5C842',
+        borderRadius: '12px',
+      }}
+    >
+      <p className="text-sm font-bold mb-3" style={{ color: '#B8860B' }}>
+        <span style={{ color: '#B8860B' }}>{t('labRecommendationAstuce')}</span>
+        {' — '}
+        {t('labRecommendationTitle')}
+      </p>
+      {children}
+    </div>
+  );
+}
+
+export default function CriteriaAccordion({ criteres, recommandationTitre, recommandationResume }) {
   const { t } = useLanguage();
   const [openIndex, setOpenIndex] = useState(null);
 
@@ -23,11 +111,18 @@ export default function CriteriaAccordion({ criteres }) {
     setOpenIndex(openIndex === index ? null : index);
   };
 
+  // Identify titre and resume criteria keys (language-agnostic)
+  const titreCriterionNames = ['Titre', 'Headline'];
+  const resumeCriterionNames = ['Résumé', 'Summary'];
+
   return (
     <div className="space-y-3">
       <h3 className="text-2xl font-black text-primary mb-4">{t('criteriaDetail')}</h3>
       {criteres.map((critere, index) => {
         const isOpen = openIndex === index;
+        const isTitre = titreCriterionNames.some(n => critere.nom.includes(n));
+        const isResume = resumeCriterionNames.some(n => critere.nom.includes(n));
+
         return (
           <div key={critere.nom} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <button
@@ -75,6 +170,29 @@ export default function CriteriaAccordion({ criteres }) {
                         ))}
                       </ul>
                     </div>
+                  )}
+
+                  {/* Recommandation du Lab — Titre */}
+                  {isTitre && recommandationTitre?.recommande && recommandationTitre?.alternative && (
+                    <LabRecommendationBox>
+                      <CopyableBlock
+                        text={recommandationTitre.recommande}
+                        badge={t('labRecommendedBadge')}
+                        badgeColor="bg-green-100 text-green-700 border border-green-200"
+                      />
+                      <CopyableBlock
+                        text={recommandationTitre.alternative}
+                        badge={t('labAlternativeBadge')}
+                        badgeColor="bg-blue-100 text-blue-700 border border-blue-200"
+                      />
+                    </LabRecommendationBox>
+                  )}
+
+                  {/* Recommandation du Lab — Résumé */}
+                  {isResume && recommandationResume && (
+                    <LabRecommendationBox>
+                      <CopyableSummaryBlock text={recommandationResume} />
+                    </LabRecommendationBox>
                   )}
                 </div>
               </div>

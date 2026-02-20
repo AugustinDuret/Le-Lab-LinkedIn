@@ -133,6 +133,15 @@ const translations = {
     // Footer
     footerText: 'Concocté en laboratoire par Augustin 🧪',
 
+    // Lab Recommendations
+    labRecommendationTitle: 'Recommandation du Lab',
+    labRecommendationAstuce: 'Astuce',
+    labRecommendedBadge: 'Recommandé',
+    labAlternativeBadge: 'Alternative',
+    labCopyButton: 'Copier',
+    labCopiedButton: 'Copié ✓',
+    labCopySummaryButton: 'Copier le résumé',
+
     // Errors
     errorGeneric: 'Une erreur est survenue. Veuillez réessayer.',
     errorConnection: 'Une erreur de connexion est survenue. Vérifiez votre connexion et réessayez.',
@@ -270,6 +279,15 @@ const translations = {
 
     // Footer
     footerText: 'Brewed in the lab by Augustin 🧪',
+
+    // Lab Recommendations
+    labRecommendationTitle: 'Lab Recommendation',
+    labRecommendationAstuce: 'Tip',
+    labRecommendedBadge: 'Recommended',
+    labAlternativeBadge: 'Alternative',
+    labCopyButton: 'Copy',
+    labCopiedButton: 'Copied ✓',
+    labCopySummaryButton: 'Copy summary',
 
     // Errors
     errorGeneric: 'An error occurred. Please try again.',
