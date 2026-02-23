@@ -1,6 +1,6 @@
 🧪 Le Lab LinkedIn d'Augustin
 
-**Your LinkedIn profile, scored out of 100 — with a personalised action plan to improve it.**
+**Your LinkedIn profile, scored out of 100 - with a personalised action plan to improve it.**
 
 An AI-powered LinkedIn profile analyser that gives you a detailed score, a radar chart across 7 key criteria, and concrete recommendations tailored to your goals.
 
@@ -41,7 +41,7 @@ An AI-powered LinkedIn profile analyser that gives you a detailed score, a radar
 
 ## About
 
-Built from scratch by [Augustin Duret](https://www.linkedin.com/in/augustin-duret) — a business profile with no prior coding experience — using AI-assisted development with Claude Code.
+Built from scratch by [Augustin Duret](https://www.linkedin.com/in/augustin-duret) - a business profile with no prior coding experience — using AI-assisted development with Claude Code.
 
 ## License
 
