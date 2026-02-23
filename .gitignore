@@ -5,3 +5,6 @@ data/
 dist/
 client/dist/
 .DS_Store
+.env.save
+Terminal Saved Output.txt
+*.save
