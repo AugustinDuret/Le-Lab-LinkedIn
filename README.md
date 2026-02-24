@@ -41,7 +41,7 @@ An AI-powered LinkedIn profile analyser that gives you a detailed score, a radar
 
 ## About
 
-Built from scratch by [Augustin Duret](https://www.linkedin.com/in/augustin-duret) - a business profile with no prior coding experience — using AI-assisted development with Claude Code.
+Built from scratch by [Augustin Duret](https://www.linkedin.com/in/augustin-duret) - a business profile with no prior coding experience - using AI-assisted development with Claude Code.
 
 ## License
 
